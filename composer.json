@@ -2,10 +2,9 @@
 	"name": "flame/thumbnail-helper",
 	"type": "library",
 	"description": "Nette template helper for lazy creating of thumbnails",
-	"keywords": ["framework", "nette", "simple", "flame", "jsifalda", "tools"],
+	"keywords": ["nette", "template", "flame", "thumbnails", "helper"],
 	"homepage": "https://github.com/flame-org/Thumbnail-Helper",
 	"license": "BSD-2-Clause-FreeBSD",
-	"minimum-stability":"dev",
 
 	"authors": [
 		{
