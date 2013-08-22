@@ -46,25 +46,25 @@ class Thumbnail extends Object
 	 */
 	public function create($imagePath, $width = 50, $height = null, $flag = null)
 	{
-
-		$flag = $this->helper->convertFlag($width, $height, $flag);
+		if (($width === null && $height === null)) {
+			throw new InvalidArgumentException('Width or height of image must be set');
+		}
 
 		$thumbDirPath = $this->helper->getDirPath();
-		$origPath = $this->helper->getImagePath($imagePath);
-
 		if (!file_exists($thumbDirPath)) {
 			$this->fileSystem->mkDir($thumbDirPath);
 		}
 
-
-		if (($width === null && $height === null)) {
-			throw new InvalidArgumentException('Width or height of image must be set');
-		} elseif (!is_dir($thumbDirPath) || !is_writable($thumbDirPath)) {
+		if (!is_dir($thumbDirPath) || !is_writable($thumbDirPath)) {
 			throw new InvalidArgumentException('Folder ' . $thumbDirPath . ' does not exist or is not writable');
-		} elseif (!file_exists($origPath)) {
+		}
+
+		$origPath = $this->helper->getImagePath($imagePath);
+		if (!file_exists($origPath)) {
 			return $imagePath;
 		}
 
+		$flag = $this->helper->convertFlag($width, $height, $flag);
 		$thumbName = $this->helper->getUniqueName($imagePath, $width, $height, $flag, filemtime($origPath));
 		$thumbUri = $this->helper->getImageUrl($thumbName);
 		$thumbPath = $thumbDirPath . DIRECTORY_SEPARATOR . $thumbName;
