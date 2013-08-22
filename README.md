@@ -30,8 +30,8 @@ In **bootstrap.php**
     	{
     		$template = parent::createTemplate($class);
     		/** @var \Flame\Thumb\ThumbnailRegister $register */
-    		$register = $this->context->getService('thumb.register');
-    		$register->register($template);
+    		$thumb = $this->context->getService('thumb.register');
+    		$thumb->register($template);
     		return $template;
     	}
     }
@@ -44,6 +44,6 @@ In **config.neon**
 		paths:
 			base: %wwwDir%
 			thumbs: /media/thumbs
-``
+```
 
 **That's all! Enjoy it!**
