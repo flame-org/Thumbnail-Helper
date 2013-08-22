@@ -8,26 +8,32 @@
  * @date    02.08.12
  */
 
-namespace Flame\Templating\Helpers;
+namespace Flame\Thumb\Templating\Helpers;
 
+use Flame\Thumb\Files\FileSystem;
 use Nette\Diagnostics\Debugger;
 use Nette\Image;
-use Flame\Tools\Files\FileSystem;
 use Nette\InvalidArgumentException;
 use Nette\Object;
+use Flame\Thumb\Helpers\ThumbnailHelper;
 
 class Thumbnail extends Object
 {
 
-	/** @var \Flame\Templating\Helpers\ThumbnailHelper */
+	/** @var \Flame\Thumb\Helpers\ThumbnailHelper  */
 	private $helper;
+
+	/** @var \Flame\Thumb\Files\FileSystem  */
+	private $fileSystem;
 
 	/**
 	 * @param ThumbnailHelper $helper
+	 * @param FileSystem $fileSystem
 	 */
-	public function __construct(ThumbnailHelper $helper)
+	public function __construct(ThumbnailHelper $helper, FileSystem $fileSystem)
 	{
 		$this->helper = $helper;
+		$this->fileSystem = $fileSystem;
 	}
 
 	/**
@@ -38,7 +44,7 @@ class Thumbnail extends Object
 	 * @return string
 	 * @throws \Nette\InvalidArgumentException
 	 */
-	public function create($imagePath, $width, $height = null, $flag = null)
+	public function create($imagePath, $width = 50, $height = null, $flag = null)
 	{
 
 		$flag = $this->helper->convertFlag($width, $height, $flag);
@@ -47,7 +53,7 @@ class Thumbnail extends Object
 		$origPath = $this->helper->getImagePath($imagePath);
 
 		if (!file_exists($thumbDirPath)) {
-			FileSystem::mkDir($thumbDirPath);
+			$this->fileSystem->mkDir($thumbDirPath);
 		}
 
 
@@ -60,7 +66,7 @@ class Thumbnail extends Object
 		}
 
 		$thumbName = $this->helper->getUniqueName($imagePath, $width, $height, $flag, filemtime($origPath));
-		$thumbUri = $this->helper->getUrl($thumbName);
+		$thumbUri = $this->helper->getImageUrl($thumbName);
 		$thumbPath = $thumbDirPath . DIRECTORY_SEPARATOR . $thumbName;
 
 		if (file_exists($thumbPath)) {
@@ -89,12 +95,8 @@ class Thumbnail extends Object
 				}
 			} catch (\Exception $ex) {
 				Debugger::log($ex);
-
 				return $imagePath;
 			}
 		}
-
 	}
-
-
 }

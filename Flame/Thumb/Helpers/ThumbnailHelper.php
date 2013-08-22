@@ -5,8 +5,9 @@
  * @author: Jiří Šifalda <sifalda.jiri@gmail.com>
  * @date: 05.05.13
  */
-namespace Flame\Templating\Helpers;
+namespace Flame\Thumb\Helpers;
 
+use Flame\Thumb\Config\IStorage;
 use Nette\Object;
 use Nette\Utils\Strings;
 use Nette\Image;
@@ -14,11 +15,10 @@ use Nette\Image;
 class ThumbnailHelper extends Object
 {
 
-	/** @var string */
-	private $thumbDirUri;
+	const SEPARATOR = '.';
 
-	/** @var string */
-	private $baseDir;
+	/** @var \Flame\Thumb\Config\IStorage  */
+	private $storage;
 
 	/** @var array */
 	private $flags = array(
@@ -30,13 +30,11 @@ class ThumbnailHelper extends Object
 	);
 
 	/**
-	 * @param string $thumbDirUri
-	 * @param string $baseDir
+	 * @param IStorage $storage
 	 */
-	public function __construct($baseDir, $thumbDirUri = '/media/thumbnails')
+	public function __construct(IStorage $storage)
 	{
-		$this->baseDir = (string)$baseDir;
-		$this->thumbDirUri = (string)$thumbDirUri;
+		$this->storage = $storage;
 	}
 
 	/**
@@ -49,13 +47,11 @@ class ThumbnailHelper extends Object
 	 */
 	public function getUniqueName($relPath, $width, $height, $flag, $mtime)
 	{
-		$sep = '.';
-		$tmp = explode($sep, $relPath);
+		$tmp = explode(self::SEPARATOR, $relPath);
 		$ext = array_pop($tmp);
-		$relPath = implode($sep, $tmp);
+		$relPath = implode(self::SEPARATOR, $tmp);
 		$relPath .= $width . 'x' . $height . '-' . $mtime . '-' . $flag;
-		$relPath = md5($relPath) . $sep . $ext;
-
+		$relPath = md5($relPath) . self::SEPARATOR . $ext;
 		return $relPath;
 	}
 
@@ -64,20 +60,7 @@ class ThumbnailHelper extends Object
 	 */
 	public function getDirPath()
 	{
-		return $this->baseDir . $this->thumbDirUri;
-	}
-
-	/**
-	 * @param $relativePath
-	 * @return string
-	 */
-	public function getImagePath($relativePath)
-	{
-		if (Strings::startsWith($relativePath, DIRECTORY_SEPARATOR) || Strings::endsWith($this->baseDir, DIRECTORY_SEPARATOR)) {
-			return $this->baseDir . $relativePath;
-		}
-
-		return $this->baseDir . DIRECTORY_SEPARATOR . $relativePath;
+		return $this->storage->getFullPath();
 	}
 
 	/**
@@ -88,8 +71,9 @@ class ThumbnailHelper extends Object
 	 */
 	public function convertFlag($width, $height, $flag)
 	{
-		if ($flag === null)
+		if ($flag === null) {
 			$flag = ($width !== null && $height !== null) ? 'STRETCH' : 'FIT';
+		}
 
 		$flag = strtolower((string)$flag);
 
@@ -97,15 +81,29 @@ class ThumbnailHelper extends Object
 	}
 
 	/**
-	 * @param $thumbName
+	 * @param string $thumbName
 	 * @return string
 	 */
-	public function getUrl($thumbName)
+	public function getImageUrl($thumbName)
 	{
-		if (Strings::startsWith($thumbName, '/') || Strings::endsWith($this->thumbDirUri, '/')) {
-			return $this->thumbDirUri . $thumbName;
+		if (Strings::startsWith($thumbName, '/') || Strings::endsWith($this->storage->getThumbsPath(), '/')) {
+			return $this->storage->getThumbsPath() . $thumbName;
 		}
 
-		return $this->thumbDirUri . '/' . $thumbName;
+		return $this->storage->getThumbsPath() . '/' . $thumbName;
+	}
+
+	/**
+	 * @param string $relativePath
+	 * @return string
+	 */
+	public function getImagePath($relativePath)
+	{
+		if (Strings::startsWith($relativePath, DIRECTORY_SEPARATOR) ||
+			Strings::endsWith($this->storage->getBasePath(), DIRECTORY_SEPARATOR)) {
+			return $this->storage->getBasePath() . $relativePath;
+		}
+
+		return $this->storage->getBasePath() . DIRECTORY_SEPARATOR . $relativePath;
 	}
 }

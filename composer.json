@@ -23,16 +23,12 @@
 		"nette/nette": ">=2.0.1"
 	},
 
-	"require-dev": {
-		"nette/tester": "dev-master",
-		"janmarek/mockista": "dev-master"
-	},
-
 	"config": {
 		"vendor-dir": "libs"
 	},
 
 	"autoload": {
-		"psr-0": {"Flame": ""}
+		"psr-0": {"Flame": ""},
+    "files": ["Flame/Thumb/compatibility.php"]
 	}
 }
