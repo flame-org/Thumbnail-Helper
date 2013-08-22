@@ -29,9 +29,9 @@ In **bootstrap.php**
     	protected function createTemplate($class = null)
     	{
     		$template = parent::createTemplate($class);
-    		/** @var \Flame\Thumb\ThumbnailRegister $register */
-    		$thumb = $this->context->getService('thumb.register');
-    		$thumb->register($template);
+    		/** @var \Flame\Thumb\IRegister $thumb */
+            $thumb = $this->context->getByType('Flame\Thumb\IRegister');
+            $thumb->register($template);
     		return $template;
     	}
     }
