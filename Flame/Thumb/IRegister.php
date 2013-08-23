@@ -9,10 +9,17 @@
 namespace Flame\Thumb;
 
 
+use Flame\Modules\Template\IHelperProvider;
 use Nette\Templating\Template;
 
-interface IRegister
+interface IRegister extends IHelperProvider
 {
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setHelperName($name);
 
 	/**
 	 * Register thumbnails helper into template

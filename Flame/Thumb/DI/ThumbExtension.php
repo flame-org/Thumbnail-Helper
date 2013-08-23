@@ -7,11 +7,12 @@
  */
 namespace Flame\Thumb\DI;
 
+use Flame\Modules\Extension\NamedExtension;
+use Flame\Modules\Providers\ITemplateHelpersProvider;
 use Nette\Configurator;
-use Nette\DI\CompilerExtension;
 use Nette\Utils\Validators;
 
-class ThumbExtension extends CompilerExtension
+class ThumbExtension extends NamedExtension implements ITemplateHelpersProvider
 {
 
 	/** @var array  */
@@ -22,6 +23,9 @@ class ThumbExtension extends CompilerExtension
 		)
 	);
 
+	/**
+	 * @return void
+	 */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
@@ -31,9 +35,6 @@ class ThumbExtension extends CompilerExtension
 		Validators::assertField($config, 'paths', 'array');
 		Validators::assertField($config['paths'], 'base', 'string');
 		Validators::assertField($config['paths'], 'thumbs', 'string');
-
-		$builder->addDefinition($this->prefix('register'))
-			->setClass('Flame\Thumb\ThumbnailRegister');
 
 		$builder->addDefinition($this->prefix('storage'))
 			->setClass('Flame\Thumb\Config\Storage')
@@ -50,6 +51,18 @@ class ThumbExtension extends CompilerExtension
 	}
 
 	/**
+	 * Return list of helpers definitions or providers
+	 *
+	 * @return array
+	 */
+	public function getHelpersConfiguration()
+	{
+		return array(
+			'Flame\Thumb\ThumbnailRegister'
+		);
+	}
+
+	/**
 	 * @param Configurator $configurator
 	 */
 	public static function register(Configurator $configurator)
@@ -58,5 +71,4 @@ class ThumbExtension extends CompilerExtension
 			$compiler->addExtension('thumb', new ThumbExtension);
 		};
 	}
-
 }

@@ -14,6 +14,9 @@ use Nette\Templating\Template;
 class ThumbnailRegister extends Object implements IRegister
 {
 
+	/** @var  string */
+	private $name = 'thumb';
+
 	/** @var \Flame\Thumb\Templating\Helpers\Thumbnail  */
 	private $thumbnail;
 
@@ -27,10 +30,19 @@ class ThumbnailRegister extends Object implements IRegister
 
 	/**
 	 * @param Template $template
-	 * @param string $name
 	 */
-	public function register(Template $template, $name = 'thumb')
+	public function register(Template $template)
 	{
-		$template->registerHelper((string) $name, array($this->thumbnail, 'create'));
+		$template->registerHelper($this->name, array($this->thumbnail, 'create'));
+	}
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setHelperName($name)
+	{
+		$this->name = (string) $name;
+		return $this;
 	}
 }
