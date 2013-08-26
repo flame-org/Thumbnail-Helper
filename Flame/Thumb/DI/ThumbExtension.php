@@ -61,14 +61,4 @@ class ThumbExtension extends NamedExtension implements ITemplateHelpersProvider
 			'Flame\Thumb\ThumbnailRegister'
 		);
 	}
-
-	/**
-	 * @param Configurator $configurator
-	 */
-	public static function register(Configurator $configurator)
-	{
-		$configurator->onCompile[] = function ($configurator, $compiler) {
-			$compiler->addExtension('thumb', new ThumbExtension);
-		};
-	}
 }
